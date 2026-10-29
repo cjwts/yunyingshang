@@ -37,7 +37,13 @@ export default function MainlinesPage() {
                   <StatusBadge tone={WORK_STATUS[l.status].tone} label={WORK_STATUS[l.status].label} />
                 </div>
                 <h2 className="mt-1 text-base font-semibold text-slate-900">{l.name}</h2>
-                <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{l.positioning}</p>
+                <div className="flex-1">
+                  <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{l.positioning}</p>
+                  <div className="mt-3 rounded-md border-l-2 border-slate-300 bg-slate-50 px-2.5 py-1.5 text-[11px] leading-relaxed">
+                    <span className="font-medium text-slate-500">当前阶段：</span>
+                    <span className="text-slate-700">{l.stage}</span>
+                  </div>
+                </div>
 
                 <div className="mt-4 flex items-center gap-3">
                   <ProgressBar value={p} tone={WORK_STATUS[l.status].tone} className="h-2" />
@@ -50,7 +56,7 @@ export default function MainlinesPage() {
                   <Stat label="未关闭风险" value={String(s.openRisks)} warn={s.highRisks > 0} />
                 </dl>
 
-                <div className="mt-auto flex items-center gap-3 border-t border-slate-100 pt-3 text-[11px] text-slate-500">
+                <div className="flex items-center gap-3 border-t border-slate-100 pt-3 text-[11px] text-slate-500">
                   <span className="flex items-center gap-1">
                     <User className="size-3" /> {l.owner}
                   </span>
@@ -59,7 +65,6 @@ export default function MainlinesPage() {
                   </span>
                   <ArrowRight className="ml-auto size-3.5 text-slate-400 group-hover:text-blue-600" />
                 </div>
-                <p className="mt-2 text-[11px] text-slate-400">当前阶段：{l.stage}</p>
               </div>
             </Link>
           );

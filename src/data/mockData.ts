@@ -1,7 +1,7 @@
 import { addDays, krProgress, todayISO, weekRange } from "@/lib/calc";
 import type { AppData, KeyResult } from "@/types";
 
-export const DATA_VERSION = 2;
+export const DATA_VERSION = 3;
 
 /**
  * 示例数据：日期以“今天”为基准相对生成，保证任何时候打开都处于合理的进度窗口。
@@ -34,14 +34,14 @@ export function createMockData(): AppData {
         order: 1,
         name: "业务回血线",
         positioning:
-          "摆脱对传统ICT立项与名录的单一依赖。以‘场景化定开’保障基础现金流，借‘Token生态准入’开辟直签新入口，同步化解历史商务与流程卡点，实现业务底盘重建。",
+          "摒弃单纯的人天项目依赖，以‘ZStack AI自研 + 阿里AI产品 + FDE交付能力’的组合拳切入高价值场景，加速商务闭环，确保团队基本盘与良性现金流。",
         problem:
           "现有收入高度依赖 ICT 定开流程，回款周期长、毛利薄；需要在 90 天内找到不依赖 ICT 流程的商机入口，同时把报销、垫资、价格授权等止血事项落到明确节点。",
         owner: "李航",
         participants: ["孙悦", "赵宁", "省区销售代表"],
         startDate: D(-40),
         endDate: D(50),
-        stage: "已启动首批场景化定开立项，同步推进两省Token生态伙伴申报。",
+        stage: "首批高价值组合拳项目已启动，正打通重点省份直签与商务流程。",
         progress: 35,
         status: "in_progress",
         updatedAt: D(-1),
@@ -73,14 +73,14 @@ export function createMockData(): AppData {
         order: 2,
         name: "生态位构建线",
         positioning:
-          "确立‘地市Token运营现场落地层’的生态占位。依托FDE小分队完成地市存量算力盘活的验证，沉淀标准化方案卡，打通‘算力-调度-计量-计费’全链路闭环。",
+          "围绕‘ZStack AI自研 + 阿里AI产品 + FDE交付能力’，卡位地市Token运营的‘现场落地层’。通过全链路闭环验证，沉淀标准化方案，建立不可替代的专属生态位。",
         problem:
           "地市存量 GPU 利用率低、计量计费链路缺失，省公司 Token 运营平台缺少现场落地能力；我们要成为地市侧不可替代的落地层，而不是又一个 ICT 定开供应商。",
         owner: "王蕾",
         participants: ["周凯", "刘洋", "赵宁"],
         startDate: D(-30),
         endDate: D(300),
-        stage: "FDE小分队已进场首个滩头地市，正输出首批场景化方案卡。",
+        stage: "FDE交付力量已进驻首个地市，正基于双引擎产品矩阵输出标准化方案卡。",
         progress: 20,
         status: "in_progress",
         updatedAt: D(-2),
@@ -104,14 +104,14 @@ export function createMockData(): AppData {
         order: 3,
         name: "阿里总部价值线",
         positioning:
-          "凸显运营商事业部在阿里体系的不可替代性。聚焦‘地市算力触达’与‘省侧Token计量承载’，用可量化的节点数与实例数证明落地纵深价值，并建立与阿里云团队的协同边界。",
+          "明确‘阿里主攻省级集采、事业部主攻地市下沉’的协同边界。用‘地市算力上线节点、Token计量嵌入、方案卡带动商机’三大硬指标，证明我们是阿里AI生态在运营商落地的唯一纵深。",
         problem:
           "总部需要看到可统计、可复盘的价值贡献；同时必须与阿里云运营商团队划清边界，避免抢单或重复覆盖。",
         owner: "陈晨",
         participants: ["王蕾", "李航"],
         startDate: D(-20),
         endDate: D(340),
-        stage: "正在梳理三项核心价值统计口径，起草与阿里云运营商团队的业务边界规则。",
+        stage: "正梳理三项核心指标口径，及与阿里云运营商团队的业务协同边界。",
         progress: 5,
         status: "at_risk",
         updatedAt: D(-3),

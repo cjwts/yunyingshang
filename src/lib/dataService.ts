@@ -13,15 +13,26 @@ export interface DataService {
 
 const STORAGE_KEY = "pmm-mainline-tracker:data";
 
+/** 旧版本数据：能迁移的就地升级（保留用户修改），否则返回 null 以重新载入示例数据 */
+function migrate(data: AppData): AppData | null {
+  if (data.version === 2) {
+    const seed = createMockData();
+    data.layers = data.layers.map((l) => {
+      const s = seed.layers.find((x) => x.id === l.id);
+      return s ? { ...l, positioning: s.positioning, stage: s.stage } : l;
+    });
+    data.version = 3;
+  }
+  return data.version === DATA_VERSION ? data : null;
+}
+
 export const localStorageService: DataService = {
   async load() {
     if (typeof window === "undefined") return null;
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
-      const parsed = JSON.parse(raw) as AppData;
-      if (parsed.version !== DATA_VERSION) return null;
-      return parsed;
+      return migrate(JSON.parse(raw) as AppData);
     } catch {
       return null;
     }
