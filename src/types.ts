@@ -15,7 +15,8 @@ export type AssetType = "solution_card" | "sales_qa" | "pitch_pack" | "consortiu
 export type AssetStatus = "draft" | "review" | "published" | "outdated";
 export type MilestoneStatus = "not_started" | "in_progress" | "at_risk" | "done";
 
-export type TaskTag = "回血" | "生态位" | "FDE" | "生态准入" | "方案卡" | "阿里价值" | "销售赋能" | "联合体";
+/** 标签可自定义；TASK_TAGS 为常用预设 */
+export type TaskTag = string;
 
 export interface WeeklyUpdate {
   id: string;
@@ -80,6 +81,7 @@ export interface Task {
   title: string;
   description: string;
   owner: string;
+  /** 为空表示不设截止日 */
   dueDate: string;
   priority: Priority;
   status: TaskStatus;

@@ -100,7 +100,10 @@ export const CONFIDENCE: Record<Confidence, { label: string; className: string }
   low: { label: "低", className: "text-red-700" },
 };
 
-export const TASK_TAGS: TaskTag[] = ["回血", "生态位", "FDE", "生态准入", "方案卡", "阿里价值", "销售赋能", "联合体"];
+export const TASK_TAGS: TaskTag[] = [
+  "回血", "生态位", "FDE", "生态准入", "方案卡", "阿里价值", "销售赋能", "联合体",
+  "方案包装", "弹药输出", "POC能力", "技术兜底", "FDE建设", "交付协同", "高层拜访", "价值输出", "竞品应对", "扫清障碍",
+];
 
 export const FDE_STAGES: { id: FdeStage; label: string }[] = [
   { id: "define", label: "定义成功标准" },

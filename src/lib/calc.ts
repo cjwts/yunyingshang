@@ -47,6 +47,12 @@ export function matchTimeRange(dueDate: string | undefined, range: TimeRange): b
   return true;
 }
 
+/** 截止日升序，未设截止日的排在最后 */
+export function compareDue(a: string, b: string): number {
+  if (!a || !b) return (a ? 0 : 1) - (b ? 0 : 1);
+  return a.localeCompare(b);
+}
+
 export function krProgress(kr: Pick<KeyResult, "currentValue" | "targetValue">): number {
   if (!kr.targetValue) return 0;
   return Math.max(0, Math.min(100, Math.round((kr.currentValue / kr.targetValue) * 100)));

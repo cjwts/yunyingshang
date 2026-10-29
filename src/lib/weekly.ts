@@ -100,7 +100,7 @@ export function generateWeeklyMarkdown(data: AppData, ref?: string): string {
   L.push("");
   L.push(`**本周新增（${added.length}）**`);
   if (!added.length) L.push(`- 无`);
-  added.forEach((t) => L.push(`- [${LAYER_META[t.layerId].short}] ${t.title}（${t.owner}，截止 ${t.dueDate}，${TASK_STATUS[t.status].label}）`));
+  added.forEach((t) => L.push(`- [${LAYER_META[t.layerId].short}] ${t.title}（${t.owner}${t.dueDate ? `，截止 ${t.dueDate}` : ""}，${TASK_STATUS[t.status].label}）`));
   if (blocked.length) {
     L.push("");
     L.push(`**阻塞中（${blocked.length}）**`);

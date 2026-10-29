@@ -23,6 +23,13 @@ function migrate(data: AppData): AppData | null {
     });
     data.version = 3;
   }
+  if (data.version === 3) {
+    const seed = createMockData();
+    const replaced = new Set(["t-1", "t-2", "t-3", "t-4"]);
+    const added = seed.tasks.filter((t) => t.layerId === "bloodline" && !data.tasks.some((x) => x.id === t.id));
+    data.tasks = [...data.tasks.filter((t) => !replaced.has(t.id)), ...added];
+    data.version = 4;
+  }
   return data.version === DATA_VERSION ? data : null;
 }
 

@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Link2, Pencil, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DueDate, LayerBadge, Pill } from "@/components/common";
 import { EntityDialog } from "@/components/entity-dialog";
-import { passFilters } from "@/lib/calc";
+import { compareDue, passFilters } from "@/lib/calc";
 import { newTask, taskFields } from "@/lib/fields";
 import { PRIORITY, TASK_STATUS, TASK_STATUS_ORDER, TONE_CLASS } from "@/lib/meta";
 import { useStore } from "@/lib/store";
@@ -38,7 +38,7 @@ export function TaskBoard({ layerId, applyFilters = true }: { layerId?: LayerId;
         {TASK_STATUS_ORDER.map((status) => {
           const items = visible
             .filter((t) => t.status === status)
-            .sort((a, b) => a.priority.localeCompare(b.priority) || a.dueDate.localeCompare(b.dueDate));
+            .sort((a, b) => a.priority.localeCompare(b.priority) || compareDue(a.dueDate, b.dueDate));
           const meta = TASK_STATUS[status];
           return (
             <div key={status} className="flex flex-col rounded-lg border border-slate-200 bg-slate-100/60">

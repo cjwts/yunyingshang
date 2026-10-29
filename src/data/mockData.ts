@@ -1,7 +1,7 @@
 import { addDays, krProgress, todayISO, weekRange } from "@/lib/calc";
 import type { AppData, KeyResult } from "@/types";
 
-export const DATA_VERSION = 3;
+export const DATA_VERSION = 4;
 
 /**
  * 示例数据：日期以“今天”为基准相对生成，保证任何时候打开都处于合理的进度窗口。
@@ -146,10 +146,11 @@ export function createMockData(): AppData {
       kr({ id: "kr-a4", layerId: "alibaba", phase: "pAli", name: "与阿里云运营商团队完成一次边界规则对齐", targetValue: 1, currentValue: 0, unit: "次", owner: "陈晨", dueDate: D(21), status: "at_risk", confidence: "low" }),
     ],
     tasks: [
-      { id: "t-1", layerId: "bloodline", title: "场景化定开项目 #2 立项评审", description: "准备立项材料，附回流资产清单（配置模板/对接规范/报价逻辑）。", owner: "李航", dueDate: D(-1), priority: "P0", status: "done", tags: ["回血", "方案卡"], dependencies: [], assetRefs: [], createdAt: D(-12), completedAt: D(-1) },
-      { id: "t-2", layerId: "bloodline", title: "A省 Token 生态伙伴申报材料二轮补材", description: "补齐运营服务案例与资质证明。", owner: "孙悦", dueDate: D(3), priority: "P0", status: "in_progress", tags: ["生态准入", "回血"], dependencies: [], assetRefs: [], createdAt: D(-20) },
-      { id: "t-3", layerId: "bloodline", title: "B省 首轮对接会：明确入口类型", description: "判断走 Token 供给主体还是运营服务伙伴；ICT 兜底作为备选。", owner: "孙悦", dueDate: D(9), priority: "P1", status: "in_progress", tags: ["生态准入"], dependencies: ["销售 VP 协调省公司对接人"], assetRefs: [], createdAt: D(-2) },
-      { id: "t-4", layerId: "bloodline", title: "止血线：垫资审批节点与财务对齐", description: "明确垫资审批节点、价格授权上限。", owner: "李航", dueDate: D(-1), priority: "P0", status: "blocked", tags: ["回血"], dependencies: ["财务 BP 排期"], assetRefs: [], createdAt: D(-15) },
+      { id: "b-t1", layerId: "bloodline", title: "打包‘直客直销’与‘电信生态’双轨制一页纸方案", description: "针对销售不敢卖、不会卖的问题，提炼两套极简方案：一是面向直客的“私有化算力盘活版”，讲清如何帮客户省钱/创收；二是面向电信体系的“Token生态准入与算力并网版”，讲清如何帮电信完成Token指标。用一页纸直接给一线做敲门砖。", owner: "产品市场部", dueDate: "", priority: "P0", status: "in_progress", tags: ["方案包装", "弹药输出"], dependencies: [], assetRefs: [], createdAt: D(-14) },
+      { id: "b-t2", layerId: "bloodline", title: "搭建并验证阿里AI+ZStack底座的轻量级POC演示沙箱", description: "利用现有测试环境完成OpenTrek Token计量与ZStack AIOS的联调。形成标准化的演示环境与测试流程，确保销售在直客或电信客户提出“现场测一下”的需求时，产品市场部能随时顶上，提供Demo支撑，不因技术验证卡壳丢单。", owner: "产品市场部", dueDate: "", priority: "P0", status: "in_progress", tags: ["POC能力", "技术兜底"], dependencies: [], assetRefs: [], createdAt: D(-14) },
+      { id: "b-t3", layerId: "bloodline", title: "确立首批FDE人员及现场接单考核规则", description: "从具备底层技术背景的团队中选拔骨干组建FDE小分队。明确FDE的接单边界（不接纯人天外包、必须能产出可复用方案卡）。制定FDE在现场的交付SOP，确保前线销售清楚“什么项目可以拉FDE进场”，且后方技术交付质量可控。", owner: "产品市场部", dueDate: "", priority: "P0", status: "in_progress", tags: ["FDE建设", "交付协同"], dependencies: [], assetRefs: [], createdAt: D(-14) },
+      { id: "b-t4", layerId: "bloodline", title: "制定面向电信体系关键节点的拜访计划与Pitch材料", description: "配合销售团队，梳理电信Token运营中心、算力超市负责人的核心KPI与关注点。制作“从存量算力到Token计费”的价值汇报材料，以产品专家身份参与关键客户的拜访，用业务逻辑帮助销售推进决策。", owner: "产品市场部", dueDate: "", priority: "P1", status: "in_progress", tags: ["高层拜访", "价值输出"], dependencies: [], assetRefs: [], createdAt: D(-14) },
+      { id: "b-t5", layerId: "bloodline", title: "梳理阻碍直客与电信打单的真实卡点及应对预案", description: "收集一线在推进直客或电信项目中遇到的实际阻力（如：竞品价格更低、客户认为产品不够成熟、集成资质不够等），针对性地输出对比测试报告、特价支持诉求材料或技术解答FAQ，帮助销售在商务谈判中争取主动。", owner: "产品市场部", dueDate: "", priority: "P1", status: "in_progress", tags: ["竞品应对", "扫清障碍"], dependencies: [], assetRefs: [], createdAt: D(-14) },
       { id: "t-5", layerId: "econiche", title: "X市 存量 GPU 盘点与利用率基线", description: "输出资源清单与利用率基线，作为 Token 计量成功标准的起点。", owner: "刘洋", dueDate: D(2), priority: "P0", status: "in_progress", tags: ["FDE", "生态位"], dependencies: [], assetRefs: [], createdAt: D(-14) },
       { id: "t-6", layerId: "econiche", title: "方案卡《省公司Token计量对接》V1 评审", description: "与 FDE 回流的对接规范合并，进入评审。", owner: "赵宁", dueDate: D(6), priority: "P1", status: "todo", tags: ["方案卡", "销售赋能"], dependencies: ["t-5"], assetRefs: ["as-2"], createdAt: D(-4) },
       { id: "t-7", layerId: "econiche", title: "方案卡《地市存量GPU盘活》V1 发布并组织销售培训", description: "在 2 个省份销售例会讲解，收集异议话术。", owner: "赵宁", dueDate: D(-3), priority: "P1", status: "done", tags: ["方案卡", "销售赋能"], dependencies: [], assetRefs: ["as-1"], createdAt: D(-18), completedAt: D(-2) },

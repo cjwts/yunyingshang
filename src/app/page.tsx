@@ -7,7 +7,7 @@ import { AlertTriangle, ArrowRight, CalendarClock, FileStack, Gauge, ListTodo, N
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { DueDate, EmptyState, LayerBadge, Panel, Pill, ProgressBar, StatusBadge } from "@/components/common";
-import { avg, inRange, layerProgress, layerStats, passFilters, phaseProgress, weekRange } from "@/lib/calc";
+import { avg, compareDue, inRange, layerProgress, layerStats, passFilters, phaseProgress, weekRange } from "@/lib/calc";
 import { LAYER_META, PHASE_IDS, PHASE_META, PRIORITY, RISK_LEVEL, RISK_STATUS, TASK_STATUS, WORK_STATUS } from "@/lib/meta";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -44,7 +44,7 @@ export default function DashboardPage() {
 
   const todos = data.tasks
     .filter((t) => t.status !== "done" && passFilters(filters, { ...t, tone: TASK_STATUS[t.status].tone }))
-    .sort((a, b) => a.dueDate.localeCompare(b.dueDate) || a.priority.localeCompare(b.priority))
+    .sort((a, b) => compareDue(a.dueDate, b.dueDate) || a.priority.localeCompare(b.priority))
     .slice(0, 8);
 
   return (
