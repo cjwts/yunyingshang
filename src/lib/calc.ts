@@ -57,9 +57,14 @@ export function avg(nums: number[]): number {
   return Math.round(nums.reduce((a, b) => a + b, 0) / nums.length);
 }
 
-export function layerProgress(data: AppData, layer: MainlineLayer): number {
-  const krs = data.keyResults.filter((k) => k.layerId === layer.id);
-  return krs.length ? avg(krs.map(krProgress)) : layer.progress;
+/** 主线进度为存储值：可手动调整，该主线 KR 变动时由 store 按 KR 均值重算 */
+export function layerProgress(_data: AppData, layer: MainlineLayer): number {
+  return layer.progress;
+}
+
+export function krAverageProgress(data: AppData, layerId: LayerId): number | null {
+  const krs = data.keyResults.filter((k) => k.layerId === layerId);
+  return krs.length ? avg(krs.map(krProgress)) : null;
 }
 
 export function phaseProgress(data: AppData, phase: PhaseId): number {

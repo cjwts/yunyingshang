@@ -41,7 +41,8 @@ export const layerInfoFields: FieldDef[] = [
   { key: "participants", label: "参与人", type: "list" },
   { key: "startDate", label: "开始日期", type: "date" },
   { key: "endDate", label: "结束日期", type: "date" },
-  { key: "stage", label: "当前阶段", type: "text" },
+  { key: "stage", label: "当前阶段", type: "text", full: true },
+  { key: "progress", label: "总进度（%）", type: "number" },
   { key: "status", label: "状态", type: "select", options: workStatusOptions },
 ];
 

@@ -50,7 +50,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label="三层主线平均进度" value={`${avgProgress}%`} sub="按各主线 KR 完成度自动计算" icon={Gauge} accent="text-blue-600" />
+        <Kpi label="三层主线平均进度" value={`${avgProgress}%`} sub="三条主线总进度均值，KR 变动时自动重算" icon={Gauge} accent="text-blue-600" />
         <Kpi label="进行中任务" value={String(inProgressTasks)} sub={`阻塞 ${blockedTasks} · 共 ${data.tasks.length} 项任务`} icon={ListTodo} accent="text-blue-600" />
         <Kpi label="高风险项（未关闭）" value={String(highRisks.length)} sub={`未关闭风险共 ${data.risks.filter((r) => r.status !== "closed").length} 项`} icon={ShieldAlert} accent="text-orange-600" />
         <Kpi label="已产出可复用资产" value={String(reusableAssets.length)} sub={`已发布 ${publishedAssets.length} · 方案卡/模板/话术包`} icon={FileStack} accent="text-emerald-600" />

@@ -75,7 +75,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const { reset } = useStore();
   return (
     <div className="flex h-full flex-col bg-slate-900">
-      <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3.5">
+      <div className="flex shrink-0 items-center gap-2 border-b border-white/10 px-4 py-3.5">
         <div className="flex size-7 items-center justify-center rounded bg-blue-600 text-white">
           <Flag className="size-4" />
         </div>
@@ -84,13 +84,11 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
           <div className="text-[11px] text-slate-400">运营商事业部 · 产品市场部</div>
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-y-auto">
         <NavList onNavigate={onNavigate} />
       </div>
-      <div className="space-y-2 border-t border-white/10 p-3">
-        <p className="text-[11px] leading-relaxed text-slate-400">
-          跟踪过程指标与可复用资产，不背签约收入；对“销售是否在正确的地图上打仗”负责。
-        </p>
+      <div className="shrink-0 space-y-1.5 border-t border-white/10 px-3 pt-3 pb-4">
+        <p className="px-2.5 text-xs leading-5 text-slate-400">聚焦过程与资产 · 赋能一线打胜仗</p>
         <Button
           variant="ghost"
           size="sm"

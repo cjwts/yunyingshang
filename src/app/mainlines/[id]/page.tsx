@@ -12,7 +12,7 @@ import { KrTable } from "@/components/kr-table";
 import { MilestoneList } from "@/components/milestone-list";
 import { RiskTable } from "@/components/risk-table";
 import { TaskBoard } from "@/components/task-board";
-import { layerProgress, layerStats, todayISO } from "@/lib/calc";
+import { krAverageProgress, layerProgress, layerStats, todayISO } from "@/lib/calc";
 import { evidenceFields, layerInfoFields, newEvidence, newWeeklyUpdate, weeklyUpdateFields } from "@/lib/fields";
 import { LAYER_META, WORK_STATUS } from "@/lib/meta";
 import { useStore } from "@/lib/store";
@@ -50,6 +50,7 @@ export default function MainlineDetailPage() {
     });
 
   const p = layerProgress(data, layer);
+  const krAvg = krAverageProgress(data, layer.id);
   const s = layerStats(data, layer.id);
   const milestones = data.milestones.filter((m) => m.layerId === layer.id);
   const updates = [...layer.weeklyUpdates].sort((a, b) => b.date.localeCompare(a.date));
@@ -99,7 +100,9 @@ export default function MainlineDetailPage() {
         <Panel title="进度">
           <div className="flex items-end gap-2">
             <span className="text-3xl font-semibold tabular-nums text-slate-900">{p}%</span>
-            <span className="pb-1 text-[11px] text-slate-400">按 KR 完成度自动计算</span>
+            <span className="pb-1 text-[11px] text-slate-400">
+              {krAvg !== null ? `KR 均值 ${krAvg}% · KR 变动时自动重算` : "可在“编辑”中手动调整"}
+            </span>
           </div>
           <ProgressBar value={p} tone={WORK_STATUS[layer.status].tone} className="mt-2 h-2" />
           <dl className="mt-4 grid grid-cols-2 gap-2 text-xs">
@@ -212,7 +215,7 @@ export default function MainlineDetailPage() {
         title={`编辑主线 · ${layer.name}`}
         fields={layerInfoFields}
         initial={layer}
-        onSubmit={(v) => mutateLayer((l) => Object.assign(l, v))}
+        onSubmit={(v) => mutateLayer((l) => Object.assign(l, v, { progress: Math.max(0, Math.min(100, Math.round(Number(v.progress) || 0))) }))}
       />
       <EntityDialog
         open={!!editUpdate}

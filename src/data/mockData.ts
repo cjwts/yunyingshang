@@ -1,7 +1,7 @@
 import { addDays, krProgress, todayISO, weekRange } from "@/lib/calc";
 import type { AppData, KeyResult } from "@/types";
 
-export const DATA_VERSION = 1;
+export const DATA_VERSION = 2;
 
 /**
  * 示例数据：日期以“今天”为基准相对生成，保证任何时候打开都处于合理的进度窗口。
@@ -33,15 +33,16 @@ export function createMockData(): AppData {
         id: "bloodline",
         order: 1,
         name: "业务回血线",
-        positioning: "不是“多接单”，是“换一种单接”——场景化定开做现金流，Token 生态准入打开非 ICT 入口，止血线并行推进。",
+        positioning:
+          "摆脱对传统ICT立项与名录的单一依赖。以‘场景化定开’保障基础现金流，借‘Token生态准入’开辟直签新入口，同步化解历史商务与流程卡点，实现业务底盘重建。",
         problem:
           "现有收入高度依赖 ICT 定开流程，回款周期长、毛利薄；需要在 90 天内找到不依赖 ICT 流程的商机入口，同时把报销、垫资、价格授权等止血事项落到明确节点。",
         owner: "李航",
         participants: ["孙悦", "赵宁", "省区销售代表"],
         startDate: D(-40),
         endDate: D(50),
-        stage: "场景化定开立项 + 两省生态准入申报",
-        progress: 0,
+        stage: "已启动首批场景化定开立项，同步推进两省Token生态伙伴申报。",
+        progress: 35,
         status: "in_progress",
         updatedAt: D(-1),
         evidence: [
@@ -53,8 +54,8 @@ export function createMockData(): AppData {
             id: "wu-b1",
             date: D(-1),
             author: "李航",
-            progress: "场景化定开项目 #1（地市算力运营平台对接）完成立项评审，回流资产清单已附；A省准入材料进入二轮补材。",
-            nextPlan: "推动项目 #2 立项；B省完成首轮对接会，明确供给主体 vs 运营服务伙伴路线。",
+            progress: "场景化定开项目 #1、#2 均完成立项评审，回流资产清单已附；A省准入材料进入二轮补材；B省首轮对接会筹备中。",
+            nextPlan: "两个定开项目进场启动；B省完成首轮对接会，明确供给主体 vs 运营服务伙伴路线。",
             supportNeeded: "需要财务确认垫资审批节点；需要销售 VP 协调 B省省公司对接人。",
           },
           {
@@ -71,15 +72,16 @@ export function createMockData(): AppData {
         id: "econiche",
         order: 2,
         name: "生态位构建线",
-        positioning: "地市 Token 运营的“现场落地层”——FDE 滩头验证 + 方案卡回流，把“存量算力→可计费 Token”闭环焊死。",
+        positioning:
+          "确立‘地市Token运营现场落地层’的生态占位。依托FDE小分队完成地市存量算力盘活的验证，沉淀标准化方案卡，打通‘算力-调度-计量-计费’全链路闭环。",
         problem:
           "地市存量 GPU 利用率低、计量计费链路缺失，省公司 Token 运营平台缺少现场落地能力；我们要成为地市侧不可替代的落地层，而不是又一个 ICT 定开供应商。",
         owner: "王蕾",
         participants: ["周凯", "刘洋", "赵宁"],
         startDate: D(-30),
         endDate: D(300),
-        stage: "FDE 滩头进场 · 方案卡 V1 产出",
-        progress: 0,
+        stage: "FDE小分队已进场首个滩头地市，正输出首批场景化方案卡。",
+        progress: 20,
         status: "in_progress",
         updatedAt: D(-2),
         evidence: [
@@ -101,15 +103,16 @@ export function createMockData(): AppData {
         id: "alibaba",
         order: 3,
         name: "阿里总部价值线",
-        positioning: "不是“多卖 PPU 和 OpenTrek”，是“做阿里云不做的落地纵深”——三个可统计口径 + 与阿里云运营商团队边界对齐。",
+        positioning:
+          "凸显运营商事业部在阿里体系的不可替代性。聚焦‘地市算力触达’与‘省侧Token计量承载’，用可量化的节点数与实例数证明落地纵深价值，并建立与阿里云团队的协同边界。",
         problem:
           "总部需要看到可统计、可复盘的价值贡献；同时必须与阿里云运营商团队划清边界，避免抢单或重复覆盖。",
         owner: "陈晨",
         participants: ["王蕾", "李航"],
         startDate: D(-20),
         endDate: D(340),
-        stage: "口径定义 + 边界规则初稿",
-        progress: 0,
+        stage: "正在梳理三项核心价值统计口径，起草与阿里云运营商团队的业务边界规则。",
+        progress: 5,
         status: "at_risk",
         updatedAt: D(-3),
         evidence: [
@@ -128,14 +131,14 @@ export function createMockData(): AppData {
       },
     ],
     keyResults: [
-      kr({ id: "kr-b1", layerId: "bloodline", phase: "p90", name: "场景化定开项目立项数 ≥ 2 个，且每个项目有回流资产清单", targetValue: 2, currentValue: 1, prev: 0, unit: "个", owner: "李航", dueDate: D(30), status: "in_progress", confidence: "medium" }),
+      kr({ id: "kr-b1", layerId: "bloodline", phase: "p90", name: "场景化定开项目立项数 ≥ 2 个，且每个项目有回流资产清单", targetValue: 2, currentValue: 2, prev: 1, unit: "个", owner: "李航", dueDate: D(30), status: "done", confidence: "high" }),
       kr({ id: "kr-b2", layerId: "bloodline", phase: "p90", name: "2 个省份完成 Token 生态伙伴/供给主体申报或进入对接流程", targetValue: 2, currentValue: 1, prev: 1, unit: "省", owner: "孙悦", dueDate: D(45), status: "in_progress", confidence: "medium" }),
       kr({ id: "kr-b3", layerId: "bloodline", phase: "p90", name: "第一个不经过 ICT 流程的商机出现", targetValue: 1, currentValue: 0, unit: "个", owner: "李航", dueDate: D(50), status: "at_risk", confidence: "low" }),
-      kr({ id: "kr-b4", layerId: "bloodline", phase: "p90", name: "止血线关键事项推进状态（报销/垫资/价格授权）有明确节点", targetValue: 3, currentValue: 2, prev: 1, unit: "项", owner: "李航", dueDate: D(20), status: "in_progress", confidence: "high" }),
+      kr({ id: "kr-b4", layerId: "bloodline", phase: "p90", name: "止血线关键事项推进状态（报销/垫资/价格授权）有明确节点", targetValue: 3, currentValue: 0, unit: "项", owner: "李航", dueDate: D(20), status: "at_risk", confidence: "medium" }),
       kr({ id: "kr-e1", layerId: "econiche", phase: "p90", name: "1 个地市完成“存量算力→可计费 Token”最小闭环验证", targetValue: 1, currentValue: 0, unit: "个", owner: "周凯", dueDate: D(55), status: "in_progress", confidence: "medium" }),
       kr({ id: "kr-e2", layerId: "econiche", phase: "p90", name: "方案卡 V1 产出 3 张（地市存量GPU盘活/省公司Token计量对接/政企Token套餐）", targetValue: 3, currentValue: 1, prev: 0, unit: "张", owner: "赵宁", dueDate: D(25), status: "in_progress", confidence: "high" }),
       kr({ id: "kr-e3", layerId: "econiche", phase: "p6_12", name: "方案卡被至少 3 个省份销售实际使用", targetValue: 3, currentValue: 2, prev: 1, unit: "省", owner: "赵宁", dueDate: D(120), status: "in_progress", confidence: "medium" }),
-      kr({ id: "kr-e4", layerId: "econiche", phase: "p90", name: "FDE 小分队 90 天滩头验证完成，且未接普通 ICT 定开", targetValue: 90, currentValue: 32, prev: 25, unit: "天", owner: "周凯", dueDate: D(58), status: "in_progress", confidence: "medium" }),
+      kr({ id: "kr-e4", layerId: "econiche", phase: "p90", name: "FDE 小分队 90 天滩头验证完成，且未接普通 ICT 定开", targetValue: 1, currentValue: 0, unit: "次", owner: "周凯", dueDate: D(58), status: "in_progress", confidence: "medium" }),
       kr({ id: "kr-e5", layerId: "econiche", phase: "p6_12", name: "1 个省公司 OpenTrek 计量对接进入 POC 或实际承载", targetValue: 1, currentValue: 0, unit: "个", owner: "王蕾", dueDate: D(150), status: "not_started", confidence: "medium" }),
       kr({ id: "kr-a1", layerId: "alibaba", phase: "pAli", name: "地市 PPU 上线节点 ≥ 2 个", targetValue: 2, currentValue: 0, unit: "个", owner: "陈晨", dueDate: D(180), status: "not_started", confidence: "medium" }),
       kr({ id: "kr-a2", layerId: "alibaba", phase: "pAli", name: "OpenTrek 计量/分发实例 ≥ 1 个省公司", targetValue: 1, currentValue: 0, unit: "个", owner: "王蕾", dueDate: D(200), status: "not_started", confidence: "low" }),
@@ -143,14 +146,14 @@ export function createMockData(): AppData {
       kr({ id: "kr-a4", layerId: "alibaba", phase: "pAli", name: "与阿里云运营商团队完成一次边界规则对齐", targetValue: 1, currentValue: 0, unit: "次", owner: "陈晨", dueDate: D(21), status: "at_risk", confidence: "low" }),
     ],
     tasks: [
-      { id: "t-1", layerId: "bloodline", title: "场景化定开项目 #2 立项评审", description: "准备立项材料，附回流资产清单（配置模板/对接规范/报价逻辑）。", owner: "李航", dueDate: D(4), priority: "P0", status: "in_progress", tags: ["回血", "方案卡"], dependencies: [], assetRefs: [], createdAt: D(-12) },
+      { id: "t-1", layerId: "bloodline", title: "场景化定开项目 #2 立项评审", description: "准备立项材料，附回流资产清单（配置模板/对接规范/报价逻辑）。", owner: "李航", dueDate: D(-1), priority: "P0", status: "done", tags: ["回血", "方案卡"], dependencies: [], assetRefs: [], createdAt: D(-12), completedAt: D(-1) },
       { id: "t-2", layerId: "bloodline", title: "A省 Token 生态伙伴申报材料二轮补材", description: "补齐运营服务案例与资质证明。", owner: "孙悦", dueDate: D(3), priority: "P0", status: "in_progress", tags: ["生态准入", "回血"], dependencies: [], assetRefs: [], createdAt: D(-20) },
-      { id: "t-3", layerId: "bloodline", title: "B省 首轮对接会：明确入口类型", description: "判断走 Token 供给主体还是运营服务伙伴；ICT 兜底作为备选。", owner: "孙悦", dueDate: D(9), priority: "P1", status: "todo", tags: ["生态准入"], dependencies: ["销售 VP 协调省公司对接人"], assetRefs: [], createdAt: D(-2) },
+      { id: "t-3", layerId: "bloodline", title: "B省 首轮对接会：明确入口类型", description: "判断走 Token 供给主体还是运营服务伙伴；ICT 兜底作为备选。", owner: "孙悦", dueDate: D(9), priority: "P1", status: "in_progress", tags: ["生态准入"], dependencies: ["销售 VP 协调省公司对接人"], assetRefs: [], createdAt: D(-2) },
       { id: "t-4", layerId: "bloodline", title: "止血线：垫资审批节点与财务对齐", description: "明确垫资审批节点、价格授权上限。", owner: "李航", dueDate: D(-1), priority: "P0", status: "blocked", tags: ["回血"], dependencies: ["财务 BP 排期"], assetRefs: [], createdAt: D(-15) },
       { id: "t-5", layerId: "econiche", title: "X市 存量 GPU 盘点与利用率基线", description: "输出资源清单与利用率基线，作为 Token 计量成功标准的起点。", owner: "刘洋", dueDate: D(2), priority: "P0", status: "in_progress", tags: ["FDE", "生态位"], dependencies: [], assetRefs: [], createdAt: D(-14) },
       { id: "t-6", layerId: "econiche", title: "方案卡《省公司Token计量对接》V1 评审", description: "与 FDE 回流的对接规范合并，进入评审。", owner: "赵宁", dueDate: D(6), priority: "P1", status: "todo", tags: ["方案卡", "销售赋能"], dependencies: ["t-5"], assetRefs: ["as-2"], createdAt: D(-4) },
       { id: "t-7", layerId: "econiche", title: "方案卡《地市存量GPU盘活》V1 发布并组织销售培训", description: "在 2 个省份销售例会讲解，收集异议话术。", owner: "赵宁", dueDate: D(-3), priority: "P1", status: "done", tags: ["方案卡", "销售赋能"], dependencies: [], assetRefs: ["as-1"], createdAt: D(-18), completedAt: D(-2) },
-      { id: "t-8", layerId: "econiche", title: "FDE 项目三方评审机制落地", description: "产品市场 / 交付 / 销售三方评审模板，FDE 接单前必过。", owner: "王蕾", dueDate: D(-6), priority: "P1", status: "done", tags: ["FDE"], dependencies: [], assetRefs: [], createdAt: D(-25), completedAt: D(-6) },
+      { id: "t-8", layerId: "econiche", title: "FDE 三方评审机制固化为制度文件", description: "产品市场 / 交付 / 销售三方评审模板，FDE 接单前必过；报事业部发文。", owner: "王蕾", dueDate: D(12), priority: "P1", status: "todo", tags: ["FDE"], dependencies: [], assetRefs: [], createdAt: D(-25) },
       { id: "t-9", layerId: "alibaba", title: "与阿里云运营商团队边界规则对齐会", description: "基于初稿逐条对齐：谁主导、谁跟进、商机如何登记。", owner: "陈晨", dueDate: D(10), priority: "P0", status: "todo", tags: ["阿里价值", "联合体"], dependencies: ["事业部负责人约会"], assetRefs: [], createdAt: D(-3) },
       { id: "t-10", layerId: "alibaba", title: "三个可统计口径的数据底座表搭建", description: "PPU 上线节点、OpenTrek 承载实例、方案卡及带动商机，统一登记表与证据链接。", owner: "陈晨", dueDate: D(14), priority: "P1", status: "in_progress", tags: ["阿里价值"], dependencies: [], assetRefs: [], createdAt: D(-8) },
     ],
@@ -170,8 +173,8 @@ export function createMockData(): AppData {
       { id: "r-5", layerId: "bloodline", description: "B省 入口类型判断不清，材料包可能返工", level: "low", impact: "B省 准入延迟一个申报窗口", mitigation: "首轮对接会前准备两套材料包骨架", owner: "孙悦", dueDate: D(9), status: "open", createdAt: D(-1) },
     ],
     assets: [
-      { id: "as-1", name: "地市存量GPU盘活", type: "solution_card", layerId: "econiche", version: "V1.0", owner: "赵宁", status: "published", usedProvinces: ["A省", "B省"], usageCount: 5, updatedAt: D(-2), link: "https://example.com/cards/gpu-revive" },
-      { id: "as-2", name: "省公司Token计量对接", type: "solution_card", layerId: "econiche", version: "V0.8", owner: "赵宁", status: "review", usedProvinces: [], usageCount: 0, updatedAt: D(-1), link: "https://example.com/cards/token-metering" },
+      { id: "as-1", name: "地市存量GPU盘活方案卡", type: "solution_card", layerId: "econiche", version: "V1", owner: "赵宁", status: "published", usedProvinces: ["A省", "B省"], usageCount: 5, updatedAt: D(-2), link: "https://example.com/cards/gpu-revive" },
+      { id: "as-2", name: "省公司Token计量对接规范（草稿）", type: "solution_card", layerId: "econiche", version: "V0.8", owner: "赵宁", status: "review", usedProvinces: ["A省"], usageCount: 2, updatedAt: D(-1), link: "https://example.com/cards/token-metering" },
       { id: "as-3", name: "政企Token套餐", type: "solution_card", layerId: "bloodline", version: "V0.3", owner: "李航", status: "draft", usedProvinces: [], usageCount: 0, updatedAt: D(-6), link: "https://example.com/cards/gov-token-package" },
     ],
     fdeTracks: [

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { krProgress, todayISO } from "@/lib/calc";
+import { krAverageProgress, krProgress, todayISO } from "@/lib/calc";
 import { createMockData } from "@/data/mockData";
 import { dataService } from "@/lib/dataService";
 import type { AppData, GlobalFilters } from "@/types";
@@ -36,6 +36,15 @@ function normalize(prev: AppData, next: AppData): AppData {
       else if (!last || last.value !== k.currentValue) history.push({ date: today, value: k.currentValue });
     }
     return { ...k, progress: krProgress(k), history };
+  });
+  const krSignature = (d: AppData, layerId: string) =>
+    JSON.stringify(
+      d.keyResults.filter((k) => k.layerId === layerId).map((k) => [k.id, k.currentValue, k.targetValue]),
+    );
+  next.layers = next.layers.map((l) => {
+    if (krSignature(prev, l.id) === krSignature(next, l.id)) return l;
+    const auto = krAverageProgress(next, l.id);
+    return auto === null ? l : { ...l, progress: auto };
   });
   next.tasks = next.tasks.map((t) => {
     if (t.status === "done" && !t.completedAt) return { ...t, completedAt: today };
