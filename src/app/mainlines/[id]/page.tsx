@@ -94,7 +94,7 @@ export default function MainlineDetailPage() {
             <Meta label="负责人" value={layer.owner} />
             <Meta label="参与人" value={layer.participants.join("、") || "—"} />
             <Meta label="起止时间" value={`${layer.startDate} ~ ${layer.endDate}`} />
-            <Meta label="当前阶段" value={layer.stage} />
+            <Meta label="当前阶段" value={layer.currentStage} />
           </dl>
         </Panel>
         <Panel title="进度">

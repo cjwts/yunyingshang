@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Pencil, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DueDate, EmptyState, PageHeader, Pill, ProgressBar, StatusBadge } from "@/components/common";
+import { DueDate, EmptyState, PageHeader, ProgressBar, StatusBadge } from "@/components/common";
 import { EntityDialog } from "@/components/entity-dialog";
 import { InlineStatusSelect } from "@/components/inline-edit";
 import { passFilters } from "@/lib/calc";
@@ -52,7 +52,7 @@ export default function EcosystemPage() {
           <thead className="bg-slate-50 text-left text-[11px] text-slate-500">
             <tr>
               {["省份", "入口类型", "条件满足度", "缺口项", "材料包", "对接人", "当前阶段", "下一步", "截止日", "状态", ""].map((h) => (
-                <th key={h} className="px-3 py-2 font-medium">
+                <th key={h} className="px-3 py-2 font-medium whitespace-nowrap">
                   {h}
                 </th>
               ))}
@@ -61,10 +61,11 @@ export default function EcosystemPage() {
           <tbody>
             {items.map((p) => (
               <tr key={p.id} className="border-t border-slate-100 hover:bg-slate-50/60">
-                <td className="px-3 py-2 font-semibold text-slate-800">{p.province}</td>
                 <td className="px-3 py-2">
-                  <Pill>{ENTRY_TYPE[p.entryType]}</Pill>
+                  <div className="font-semibold text-slate-800">{p.province}</div>
+                  {p.zone && <div className="mt-0.5 text-[11px] whitespace-nowrap text-slate-500">{p.zone}</div>}
                 </td>
+                <td className="max-w-40 px-3 py-2 text-slate-700">{ENTRY_TYPE[p.entryType]}</td>
                 <td className="w-36 px-3 py-2">
                   <div className="flex items-center gap-2">
                     <ProgressBar value={p.conditionFit} tone={p.conditionFit >= 80 ? "green" : p.conditionFit >= 50 ? "blue" : "orange"} />
@@ -77,7 +78,7 @@ export default function EcosystemPage() {
                 </td>
                 <td className="px-3 py-2 text-slate-700">{p.contact}</td>
                 <td className="px-3 py-2 text-slate-700">{p.stage}</td>
-                <td className="max-w-56 px-3 py-2 text-slate-600">{p.nextStep}</td>
+                <td className="max-w-80 px-3 py-2 text-slate-600">{p.nextStep}</td>
                 <td className="px-3 py-2 whitespace-nowrap">
                   <DueDate date={p.dueDate} done={p.status === "done"} />
                 </td>

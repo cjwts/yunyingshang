@@ -18,9 +18,9 @@ import type {
 } from "@/types";
 
 export const LAYER_META: Record<LayerId, { name: string; short: string; accent: string }> = {
-  bloodline: { name: "业务回血线", short: "回血", accent: "bg-sky-700" },
+  bloodline: { name: "业务回血与信心重振线", short: "回血", accent: "bg-sky-700" },
   econiche: { name: "生态位构建线", short: "生态位", accent: "bg-indigo-700" },
-  alibaba: { name: "阿里总部价值线", short: "阿里价值", accent: "bg-slate-700" },
+  alibaba: { name: "阿里集团价值线", short: "阿里价值", accent: "bg-slate-700" },
 };
 export const LAYER_IDS: LayerId[] = ["bloodline", "econiche", "alibaba"];
 
@@ -101,8 +101,8 @@ export const CONFIDENCE: Record<Confidence, { label: string; className: string }
 };
 
 export const TASK_TAGS: TaskTag[] = [
-  "回血", "生态位", "FDE", "生态准入", "方案卡", "阿里价值", "销售赋能", "联合体",
-  "方案包装", "弹药输出", "POC能力", "技术兜底", "FDE建设", "交付协同", "高层拜访", "价值输出", "竞品应对", "扫清障碍",
+  "方案包装", "高层拜访", "扫清障碍", "商务支撑", "POC能力", "FDE建设", "滩头验证", "资产沉淀",
+  "机制设计", "商务谈判", "联合打单", "销售弹药", "价值证明", "方案卡", "生态准入", "联合体",
 ];
 
 export const FDE_STAGES: { id: FdeStage; label: string }[] = [
@@ -114,9 +114,10 @@ export const FDE_STAGES: { id: FdeStage; label: string }[] = [
 ];
 
 export const ENTRY_TYPE: Record<EntryType, string> = {
-  token_supplier: "Token 供给主体",
-  ops_partner: "运营服务伙伴",
-  ict_fallback: "ICT 兜底",
+  direct_sales: "直客直销 / 本地私有化算力盘活",
+  telecom_token: "Token生态伙伴 / 电信算力超市",
+  si_consortium: "本地集成商联合体",
+  ict_fallback: "传统ICT兜底",
 };
 
 export const MATERIAL_STATUS: Record<MaterialStatus, { label: string; tone: Tone }> = {

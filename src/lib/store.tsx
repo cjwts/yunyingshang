@@ -42,9 +42,14 @@ function normalize(prev: AppData, next: AppData): AppData {
       d.keyResults.filter((k) => k.layerId === layerId).map((k) => [k.id, k.currentValue, k.targetValue]),
     );
   next.layers = next.layers.map((l) => {
-    if (krSignature(prev, l.id) === krSignature(next, l.id)) return l;
+    const synced = {
+      ...l,
+      krList: next.keyResults.filter((k) => k.layerId === l.id).map((k) => k.id),
+      taskList: next.tasks.filter((t) => t.layerId === l.id).map((t) => t.id),
+    };
+    if (krSignature(prev, l.id) === krSignature(next, l.id)) return synced;
     const auto = krAverageProgress(next, l.id);
-    return auto === null ? l : { ...l, progress: auto };
+    return auto === null ? synced : { ...synced, progress: auto };
   });
   next.tasks = next.tasks.map((t) => {
     if (t.status === "done" && !t.completedAt) return { ...t, completedAt: today };

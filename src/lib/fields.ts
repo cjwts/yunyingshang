@@ -41,7 +41,7 @@ export const layerInfoFields: FieldDef[] = [
   { key: "participants", label: "参与人", type: "list" },
   { key: "startDate", label: "开始日期", type: "date" },
   { key: "endDate", label: "结束日期", type: "date" },
-  { key: "stage", label: "当前阶段", type: "text", full: true },
+  { key: "currentStage", label: "当前阶段", type: "text", full: true },
   { key: "progress", label: "总进度（%）", type: "number" },
   { key: "status", label: "状态", type: "select", options: workStatusOptions },
 ];
@@ -53,6 +53,8 @@ export const krFields: FieldDef[] = [
   { key: "targetValue", label: "目标值", type: "number" },
   { key: "currentValue", label: "当前值", type: "number" },
   { key: "unit", label: "单位", type: "text" },
+  { key: "targetNote", label: "目标说明（定性）", type: "text", placeholder: "如：全员覆盖" },
+  { key: "currentNote", label: "当前说明（定性）", type: "text", placeholder: "如：编写中" },
   { key: "owner", label: "负责人", type: "text", required: true },
   { key: "dueDate", label: "截止日", type: "date" },
   { key: "status", label: "状态", type: "select", options: workStatusOptions },
@@ -174,6 +176,7 @@ export const newAsset = (layerId: LayerId = "econiche"): Asset => ({
 
 export const provinceFields: FieldDef[] = [
   { key: "province", label: "省份", type: "text", required: true },
+  { key: "zone", label: "策略定位", type: "text", placeholder: "如：直客直销突破区" },
   { key: "entryType", label: "入口类型", type: "select", options: toOptions(ENTRY_TYPE) },
   { key: "conditionFit", label: "准入条件满足度（%）", type: "number" },
   { key: "materialStatus", label: "材料包状态", type: "select", options: toOptions(MATERIAL_STATUS) },
@@ -188,7 +191,8 @@ export const provinceFields: FieldDef[] = [
 export const newProvince = (): ProvinceEcosystem => ({
   id: uid("pv"),
   province: "",
-  entryType: "token_supplier",
+  zone: "",
+  entryType: "direct_sales",
   conditionFit: 0,
   gaps: "",
   materialStatus: "not_started",

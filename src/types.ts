@@ -44,10 +44,13 @@ export interface MainlineLayer {
   participants: string[];
   startDate: string;
   endDate: string;
-  stage: string;
-  /** 手动进度，仅在该主线没有 KR 时使用；有 KR 时进度由 KR 自动计算 */
+  currentStage: string;
+  /** 总进度（%）：可手动调整，该主线 KR 变动时按 KR 均值重算 */
   progress: number;
   status: WorkStatus;
+  /** 该主线下 KR / 任务的 id 列表（有序），由 store 与 keyResults / tasks 集合自动保持同步 */
+  krList: string[];
+  taskList: string[];
   weeklyUpdates: WeeklyUpdate[];
   evidence: EvidenceLink[];
   updatedAt: string;
@@ -66,6 +69,9 @@ export interface KeyResult {
   targetValue: number;
   currentValue: number;
   unit: string;
+  /** 定性口径说明，如“全员覆盖”“编写中”，与数值并列展示 */
+  targetNote?: string;
+  currentNote?: string;
   /** 由 currentValue / targetValue 计算，保存时同步 */
   progress: number;
   owner: string;
@@ -160,12 +166,14 @@ export interface FdeTrack {
   updatedAt: string;
 }
 
-export type EntryType = "token_supplier" | "ops_partner" | "ict_fallback";
+export type EntryType = "direct_sales" | "telecom_token" | "si_consortium" | "ict_fallback";
 export type MaterialStatus = "not_started" | "preparing" | "submitted" | "approved";
 
 export interface ProvinceEcosystem {
   id: string;
   province: string;
+  /** 一省一策的策略定位，如“直客直销突破区” */
+  zone: string;
   entryType: EntryType;
   conditionFit: number;
   gaps: string;

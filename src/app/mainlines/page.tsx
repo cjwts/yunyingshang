@@ -41,7 +41,7 @@ export default function MainlinesPage() {
                   <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{l.positioning}</p>
                   <div className="mt-3 rounded-md border-l-2 border-slate-300 bg-slate-50 px-2.5 py-1.5 text-[11px] leading-relaxed">
                     <span className="font-medium text-slate-500">当前阶段：</span>
-                    <span className="text-slate-700">{l.stage}</span>
+                    <span className="text-slate-700">{l.currentStage}</span>
                   </div>
                 </div>
 

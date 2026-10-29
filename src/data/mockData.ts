@@ -1,11 +1,11 @@
 import { addDays, krProgress, todayISO, weekRange } from "@/lib/calc";
-import type { AppData, KeyResult } from "@/types";
+import type { AppData, KeyResult, LayerId, MainlineLayer, Priority, Task, TaskStatus } from "@/types";
 
-export const DATA_VERSION = 4;
+export const DATA_VERSION = 5;
 
 /**
  * 示例数据：日期以“今天”为基准相对生成，保证任何时候打开都处于合理的进度窗口。
- * 人名、省份、地市均为脱敏代称。
+ * 任务一律站在产品市场部职能视角，不设具体截止日。
  */
 export function createMockData(): AppData {
   const t = todayISO();
@@ -21,211 +21,261 @@ export function createMockData(): AppData {
     return { ...rest, progress: krProgress(rest), history };
   };
 
+  const task = (
+    id: string,
+    layerId: LayerId,
+    title: string,
+    owner: string,
+    status: TaskStatus,
+    priority: Priority,
+    tags: string[],
+    description: string,
+  ): Task => ({
+    id,
+    layerId,
+    title,
+    description,
+    owner,
+    dueDate: "",
+    priority,
+    status,
+    tags,
+    dependencies: [],
+    assetRefs: [],
+    createdAt: D(-14),
+  });
+
+  const keyResults: KeyResult[] = [
+    // 第1层：业务回血与信心重振线
+    kr({ id: "kr-b1", layerId: "bloodline", phase: "p90", name: "跑通双轨模式下的首批项目回款", targetValue: 2, currentValue: 0, unit: "笔", targetNote: "首批笔数", currentNote: "跟进中", owner: "产品市场部负责人", dueDate: D(60), status: "in_progress", confidence: "medium" }),
+    kr({ id: "kr-b2", layerId: "bloodline", phase: "p90", name: "发布极简版打单弹药，恢复核心销售信心", targetValue: 100, currentValue: 70, prev: 40, unit: "%", targetNote: "全员覆盖", currentNote: "编写中", owner: "产品市场部", dueDate: D(30), status: "in_progress", confidence: "high" }),
+    kr({ id: "kr-b3", layerId: "bloodline", phase: "p90", name: "打通特价审批与垫资清算的快速通道", targetValue: 3, currentValue: 1, prev: 0, unit: "项", targetNote: "机制落地", currentNote: "草拟中", owner: "产品市场部负责人", dueDate: D(45), status: "in_progress", confidence: "medium" }),
+    // 第2层：生态位构建线
+    kr({ id: "kr-e1", layerId: "econiche", phase: "p90", name: "1个地市完成“存量算力→可计费Token”最小闭环验证", targetValue: 1, currentValue: 0, unit: "个", owner: "FDE负责人", dueDate: D(75), status: "in_progress", confidence: "medium" }),
+    kr({ id: "kr-e2", layerId: "econiche", phase: "p90", name: "方案卡 V1 产出 3 张（存量GPU盘活/Token计量对接/政企Token套餐）", targetValue: 3, currentValue: 1, prev: 0, unit: "张", owner: "产品市场部", dueDate: D(60), status: "in_progress", confidence: "high" }),
+    kr({ id: "kr-e3", layerId: "econiche", phase: "p6_12", name: "方案卡被至少 3 个省份销售实际使用", targetValue: 3, currentValue: 1, unit: "省", owner: "产品市场部", dueDate: D(180), status: "in_progress", confidence: "medium" }),
+    // 第3层：阿里集团价值线
+    kr({ id: "kr-a1", layerId: "alibaba", phase: "pAli", name: "输出首批《阿里AI+ZStack》联合拿单方案与报价体系", targetValue: 100, currentValue: 15, prev: 0, unit: "%", targetNote: "方案与报价体系发布", currentNote: "框架初稿", owner: "产品市场部", dueDate: D(60), status: "in_progress", confidence: "medium" }),
+    kr({ id: "kr-a2", layerId: "alibaba", phase: "pAli", name: "确立与阿里云的‘线索互转与联合带货’分润/报备机制", targetValue: 1, currentValue: 0, unit: "项", targetNote: "机制签署", currentNote: "首轮沟通", owner: "产品市场部", dueDate: D(90), status: "not_started", confidence: "low" }),
+    kr({ id: "kr-a3", layerId: "alibaba", phase: "pAli", name: "跑通首批联合带货标杆项目，验证渠道变现能力", targetValue: 2, currentValue: 0, unit: "个", owner: "产品市场部", dueDate: D(180), status: "not_started", confidence: "medium" }),
+  ];
+
+  const tasks: Task[] = [
+    // 第1层：聚焦极简弹药与前线支援
+    task("b-t1", "bloodline", "打包‘直客直销’与‘电信生态’双轨制一页纸方案", "产品市场部", "in_progress", "P0", ["方案包装"],
+      "提炼两套极简方案：直客版（私有化算力盘活省钱方案）与电信版（Token生态并网达标方案）。直接给出基础配置清单和参考报价区间，让销售拿着就能去谈钱。"),
+    task("b-t2", "bloodline", "陪同销售攻坚首批直客与电信关键节点拜访", "产品市场部", "in_progress", "P0", ["高层拜访"],
+      "产品市场部负责人及核心骨干直接跟销售绑定。带着“阿里AI+ZStack”的业务逻辑去讲，用专家身份背书，当场解答客户疑虑，配合销售快速锁定POC意向或签单。"),
+    task("b-t3", "bloodline", "扫清当前成单的技术与竞品路障", "产品市场部", "in_progress", "P1", ["扫清障碍"],
+      "不搞重型测试环境，直接利用现有轻量级Demo演示。针对一线反馈的竞品（如SmartX）价格战或功能质疑，立刻输出应对FAQ和对比数据，不让项目停滞。"),
+    task("b-t4", "bloodline", "配合推动首批直客与电信生态项目的商务闭环", "产品市场部", "in_progress", "P1", ["商务支撑"],
+      "配合销售整理特价申请的材料支撑、联合体交付的技术边界划分说明。确保在商务谈判阶段后方材料不掉链子，助力项目快速进入合同流程。"),
+    // 第2层：聚焦能力底座与交付标准
+    task("e-t1", "econiche", "搭建标准化阿里AI（OpenTrek/PPU）+ZStack POC测试沙箱", "产品市场部", "in_progress", "P0", ["POC能力"],
+      "利用现有测试环境完成联调。形成标准化的演示环境与测试流程，确保销售在面临客户“现场测一下”的需求时，团队能随时顶上，不因技术验证卡壳丢单。"),
+    task("e-t2", "econiche", "启动首批FDE团队选拔与考核规则制定", "产品市场部", "in_progress", "P0", ["FDE建设"],
+      "从具备底层技术背景的团队中选拔骨干。明确FDE的接单边界（不接纯人天外包、必须能产出可复用方案卡）。制定FDE在现场的交付SOP。"),
+    task("e-t3", "econiche", "依托FDE开展首个地市滩头项目验证", "FDE团队 & 产品市场部", "in_progress", "P0", ["滩头验证"],
+      "带“ZStack底座+阿里AI”进场，跑通“异构算力接入→容器承载→Token计量→计费”全链路，形成首个成功样板点。"),
+    task("e-t4", "econiche", "沉淀《地市算力盘活与Token计费》标准化方案卡", "产品市场部", "in_progress", "P1", ["资产沉淀"],
+      "将FDE验证过程中的配置规范、接口逻辑、定价模式提炼成可复制的方案卡V1。"),
+    // 第3层：聚焦带货变现与要资源
+    task("a-t1", "alibaba", "制定‘ZStack+阿里AI’联合销售的利益测算与激励规则", "产品市场部 & 销售负责人", "in_progress", "P0", ["机制设计"],
+      "拆解阿里AI产品的利润空间，形成面向一线的利益测算模型。明确“底座+AI”搭售的高毛利优势，并联合制定专项销售提成与奖金激励政策，让一线看清收益，自发倾向主推联合方案。"),
+    task("a-t2", "alibaba", "向阿里争取‘底价+高返点’的特价资源池", "产品市场部", "in_progress", "P0", ["商务谈判"],
+      "用“帮阿里下沉带货”作为筹码，向阿里区域团队申请专属的特价折扣和项目返点。把争取来的底价转化为前端的打单优势，让销售有足够厚的利润垫。"),
+    task("a-t3", "alibaba", "打通与阿里销售的‘绑定性报备’与联合打单机制", "产品市场部", "in_progress", "P1", ["联合打单"],
+      "与阿里云一线销售建立利益共同体。只要客户有下沉或私有化需求，阿里的销售就愿意把线索交给我们，彼此算业绩，联合见客户以提升赢单率。"),
+    task("a-t4", "alibaba", "出包装‘算过账’的极简打单报价器", "产品市场部", "todo", "P1", ["销售弹药"],
+      "出个傻瓜式的“极简报价器”或利润测算表，输入客户规模，一键生成包含“ZStack底座+阿里AI+服务费”的打包报价，让销售一眼看出这单能赚多少钱。"),
+    task("a-t5", "alibaba", "提炼‘带货战报’，向阿里输出渠道变现价值", "产品市场部", "todo", "P2", ["价值证明"],
+      "将我们在电信体系拿下的商机、卖出的阿里产品数量整理成“带货战报”反馈给阿里。证明我们的渠道变现能力，换取后续更便宜的资源倾斜。"),
+  ];
+
+  const ids = (list: { id: string; layerId: LayerId }[], layerId: LayerId) =>
+    list.filter((x) => x.layerId === layerId).map((x) => x.id);
+
+  const layer = (l: Omit<MainlineLayer, "krList" | "taskList">): MainlineLayer => ({
+    ...l,
+    krList: ids(keyResults, l.id),
+    taskList: ids(tasks, l.id),
+  });
+
   return {
     version: DATA_VERSION,
     settings: {
       currentPhase: "p90",
       weeklyHighlights:
-        "1. A省 Token 生态伙伴申报材料包进入二轮补材，缺口收敛到“运营服务案例”1 项。\n2. FDE 小分队在 A省·X市 完成进场，存量 GPU 盘点完成 70%。\n3. 方案卡《地市存量GPU盘活》V1 已在 2 个省份销售例会使用。",
+        "1. 历史欠款清收专班成立，按客户逐笔跟进回款，报销机制恢复方案已提交决策。\n2. 双轨制一页纸方案（直客版/电信版）完成初稿，福建、北京销售已开始试用。\n3. FDE首批人员选拔启动，POC沙箱联调方案确定，等待阿里测试资源到位。",
     },
     layers: [
-      {
+      layer({
         id: "bloodline",
         order: 1,
-        name: "业务回血线",
+        name: "业务回血与信心重振线",
         positioning:
-          "摒弃单纯的人天项目依赖，以‘ZStack AI自研 + 阿里AI产品 + FDE交付能力’的组合拳切入高价值场景，加速商务闭环，确保团队基本盘与良性现金流。",
+          "直面千万级历史欠款与垫资死结。以“清欠款+防垫资”双管齐下：直客主打“零垫资快回款”稳健创收；电信主打“联合体+公司兜底”化解垫资风险。彻底恢复报销机制，用真实健康的现金流重塑一线销售信心。",
         problem:
-          "现有收入高度依赖 ICT 定开流程，回款周期长、毛利薄；需要在 90 天内找到不依赖 ICT 流程的商机入口，同时把报销、垫资、价格授权等止血事项落到明确节点。",
-        owner: "李航",
-        participants: ["孙悦", "赵宁", "省区销售代表"],
+          "历史欠款与项目垫资压力叠加，报销机制受阻，一线销售不敢接单、不会讲价值。产品市场部要用极简弹药、陪访和商务材料支撑，帮一线把单子安全地拿回来。",
+        owner: "产品市场部负责人",
+        participants: ["区域销售负责人", "财务BP", "商务"],
         startDate: D(-40),
         endDate: D(50),
-        stage: "首批高价值组合拳项目已启动，正打通重点省份直签与商务流程。",
+        currentStage: "历史欠款清收专班推进中，直客打样与电信垫资机制重构并行。",
         progress: 35,
         status: "in_progress",
         updatedAt: D(-1),
         evidence: [
-          { id: "ev-b1", title: "场景化定开立项评审纪要", kind: "文档", url: "https://example.com/docs/scene-dev-review" },
-          { id: "ev-b2", title: "A省 Token 生态准入材料包清单", kind: "文档", url: "https://example.com/docs/a-province-package" },
+          { id: "ev-b1", title: "双轨制一页纸方案（直客版 / 电信版）草稿", kind: "方案卡", url: "https://example.com/docs/dual-track-onepager" },
+          { id: "ev-b2", title: "历史欠款清收台账", kind: "数据看板", url: "https://example.com/dash/receivables" },
         ],
         weeklyUpdates: [
           {
             id: "wu-b1",
             date: D(-1),
-            author: "李航",
-            progress: "场景化定开项目 #1、#2 均完成立项评审，回流资产清单已附；A省准入材料进入二轮补材；B省首轮对接会筹备中。",
-            nextPlan: "两个定开项目进场启动；B省完成首轮对接会，明确供给主体 vs 运营服务伙伴路线。",
-            supportNeeded: "需要财务确认垫资审批节点；需要销售 VP 协调 B省省公司对接人。",
-          },
-          {
-            id: "wu-b0",
-            date: addDays(wk, -5),
-            author: "李航",
-            progress: "梳理 6 个候选场景化定开机会，筛出 2 个符合“回流资产”要求的项目。",
-            nextPlan: "项目 #1 立项评审；A省准入材料补齐。",
-            supportNeeded: "无",
+            author: "产品市场部负责人",
+            progress: "历史欠款清收专班已成立并按客户逐笔跟进；双轨制一页纸方案完成初稿，正在补充基础配置清单与参考报价区间。",
+            nextPlan: "陪同销售完成首批直客与电信关键节点拜访；特价审批与垫资清算快速通道方案提交决策。",
+            supportNeeded: "需要事业部明确报销恢复的审批口径；需要财务配合制定垫资清算规则。",
           },
         ],
-      },
-      {
+      }),
+      layer({
         id: "econiche",
         order: 2,
         name: "生态位构建线",
         positioning:
-          "围绕‘ZStack AI自研 + 阿里AI产品 + FDE交付能力’，卡位地市Token运营的‘现场落地层’。通过全链路闭环验证，沉淀标准化方案，建立不可替代的专属生态位。",
+          "聚焦“ZStack底座+阿里AI产品”组合，构建地市Token运营现场落地层。从CMP团队抽人建FDE小分队，在滩头跑通“算力接入→Token计量”闭环，沉淀可复制的联合方案与POC交付能力。",
         problem:
-          "地市存量 GPU 利用率低、计量计费链路缺失，省公司 Token 运营平台缺少现场落地能力；我们要成为地市侧不可替代的落地层，而不是又一个 ICT 定开供应商。",
-        owner: "王蕾",
-        participants: ["周凯", "刘洋", "赵宁"],
+          "地市存量算力利用率低、计量计费链路缺失。我们要用“ZStack底座+阿里AI”组合和FDE交付能力占住现场落地层，而不是做纯人天外包。",
+        owner: "产品市场部 & FDE负责人",
+        participants: ["FDE负责人", "CMP团队骨干", "区域销售"],
         startDate: D(-30),
         endDate: D(300),
-        stage: "FDE交付力量已进驻首个地市，正基于双引擎产品矩阵输出标准化方案卡。",
+        currentStage: "FDE首批人员选拔与POC联调准备。",
         progress: 20,
         status: "in_progress",
         updatedAt: D(-2),
         evidence: [
-          { id: "ev-e1", title: "方案卡：地市存量GPU盘活 V1", kind: "方案卡", url: "https://example.com/cards/gpu-revive" },
-          { id: "ev-e2", title: "X市 资源利用率周看板", kind: "数据看板", url: "https://example.com/dash/x-city-util" },
+          { id: "ev-e1", title: "FDE接单边界与现场交付SOP（讨论稿）", kind: "文档", url: "https://example.com/docs/fde-sop" },
+          { id: "ev-e2", title: "POC沙箱联调方案", kind: "文档", url: "https://example.com/docs/poc-sandbox" },
         ],
         weeklyUpdates: [
           {
             id: "wu-e1",
             date: D(-2),
-            author: "王蕾",
-            progress: "FDE 小分队完成 X市 进场，存量 GPU 盘点完成 70%；方案卡《地市存量GPU盘活》V1 发布，2 省销售例会已使用。",
-            nextPlan: "跑通第一条“存量算力→Token 计量→账单”链路；《省公司Token计量对接》进入评审。",
-            supportNeeded: "需要阿里侧提供 OpenTrek 计量模块的测试 License。",
+            author: "产品市场部",
+            progress: "FDE首批人员选拔启动，候选人来自CMP团队；POC沙箱联调方案确定，《地市存量GPU盘活》方案卡V1已发布。",
+            nextPlan: "完成FDE接单边界与现场交付SOP；沙箱完成OpenTrek与ZStack AIOS首轮联调。",
+            supportNeeded: "需要CMP团队负责人支持人员抽调；需要阿里侧提供OpenTrek/PPU测试资源。",
           },
         ],
-      },
-      {
+      }),
+      layer({
         id: "alibaba",
         order: 3,
-        name: "阿里总部价值线",
+        name: "阿里集团价值线",
         positioning:
-          "明确‘阿里主攻省级集采、事业部主攻地市下沉’的协同边界。用‘地市算力上线节点、Token计量嵌入、方案卡带动商机’三大硬指标，证明我们是阿里AI生态在运营商落地的唯一纵深。",
+          "发挥运营商事业部的下沉渠道与打包能力，做阿里AI产品在电信体系的“带货商”。将阿里AI（OpenTrek/PPU）与ZStack底座包装成销售能直接拿单的联合方案，帮一线赢单，帮阿里出货，确立我们在阿里生态内不可替代的渠道价值。",
         problem:
-          "总部需要看到可统计、可复盘的价值贡献；同时必须与阿里云运营商团队划清边界，避免抢单或重复覆盖。",
-        owner: "陈晨",
-        participants: ["王蕾", "李航"],
+          "阿里AI产品缺少下沉到电信地市的渠道与打包能力，一线销售也缺少主推联合方案的利益驱动。我们要把方案、价格和激励打通，证明自己是阿里生态内不可替代的渠道。",
+        owner: "产品市场部",
+        participants: ["销售负责人", "阿里区域团队接口人"],
         startDate: D(-20),
         endDate: D(340),
-        stage: "正梳理三项核心指标口径，及与阿里云运营商团队的业务协同边界。",
+        currentStage: "正梳理联合带货方案，并与阿里拉齐商务分润与资源支持机制。",
         progress: 5,
-        status: "at_risk",
+        status: "in_progress",
         updatedAt: D(-3),
         evidence: [
-          { id: "ev-a1", title: "三个可统计口径定义 v0.3", kind: "文档", url: "https://example.com/docs/ali-metrics" },
+          { id: "ev-a1", title: "《阿里AI+ZStack》联合带货方案框架", kind: "文档", url: "https://example.com/docs/joint-offer" },
         ],
         weeklyUpdates: [
           {
             id: "wu-a1",
             date: D(-3),
-            author: "陈晨",
-            progress: "三个可统计口径定义 v0.3 完成；与阿里云运营商团队边界规则初稿已发出，待对方反馈。",
-            nextPlan: "约一次边界对齐会；确认 PPU 首个地市上线节点的统计口径。",
-            supportNeeded: "需要事业部负责人出面约阿里云运营商团队负责人。",
+            author: "产品市场部",
+            progress: "联合带货方案框架初稿完成；与阿里区域团队完成首轮分润与报备思路沟通。",
+            nextPlan: "完成联合销售利益测算模型初版；整理特价资源池申请材料。",
+            supportNeeded: "需要事业部负责人出面与阿里区域负责人对齐分润原则。",
           },
         ],
-      },
+      }),
     ],
-    keyResults: [
-      kr({ id: "kr-b1", layerId: "bloodline", phase: "p90", name: "场景化定开项目立项数 ≥ 2 个，且每个项目有回流资产清单", targetValue: 2, currentValue: 2, prev: 1, unit: "个", owner: "李航", dueDate: D(30), status: "done", confidence: "high" }),
-      kr({ id: "kr-b2", layerId: "bloodline", phase: "p90", name: "2 个省份完成 Token 生态伙伴/供给主体申报或进入对接流程", targetValue: 2, currentValue: 1, prev: 1, unit: "省", owner: "孙悦", dueDate: D(45), status: "in_progress", confidence: "medium" }),
-      kr({ id: "kr-b3", layerId: "bloodline", phase: "p90", name: "第一个不经过 ICT 流程的商机出现", targetValue: 1, currentValue: 0, unit: "个", owner: "李航", dueDate: D(50), status: "at_risk", confidence: "low" }),
-      kr({ id: "kr-b4", layerId: "bloodline", phase: "p90", name: "止血线关键事项推进状态（报销/垫资/价格授权）有明确节点", targetValue: 3, currentValue: 0, unit: "项", owner: "李航", dueDate: D(20), status: "at_risk", confidence: "medium" }),
-      kr({ id: "kr-e1", layerId: "econiche", phase: "p90", name: "1 个地市完成“存量算力→可计费 Token”最小闭环验证", targetValue: 1, currentValue: 0, unit: "个", owner: "周凯", dueDate: D(55), status: "in_progress", confidence: "medium" }),
-      kr({ id: "kr-e2", layerId: "econiche", phase: "p90", name: "方案卡 V1 产出 3 张（地市存量GPU盘活/省公司Token计量对接/政企Token套餐）", targetValue: 3, currentValue: 1, prev: 0, unit: "张", owner: "赵宁", dueDate: D(25), status: "in_progress", confidence: "high" }),
-      kr({ id: "kr-e3", layerId: "econiche", phase: "p6_12", name: "方案卡被至少 3 个省份销售实际使用", targetValue: 3, currentValue: 2, prev: 1, unit: "省", owner: "赵宁", dueDate: D(120), status: "in_progress", confidence: "medium" }),
-      kr({ id: "kr-e4", layerId: "econiche", phase: "p90", name: "FDE 小分队 90 天滩头验证完成，且未接普通 ICT 定开", targetValue: 1, currentValue: 0, unit: "次", owner: "周凯", dueDate: D(58), status: "in_progress", confidence: "medium" }),
-      kr({ id: "kr-e5", layerId: "econiche", phase: "p6_12", name: "1 个省公司 OpenTrek 计量对接进入 POC 或实际承载", targetValue: 1, currentValue: 0, unit: "个", owner: "王蕾", dueDate: D(150), status: "not_started", confidence: "medium" }),
-      kr({ id: "kr-a1", layerId: "alibaba", phase: "pAli", name: "地市 PPU 上线节点 ≥ 2 个", targetValue: 2, currentValue: 0, unit: "个", owner: "陈晨", dueDate: D(180), status: "not_started", confidence: "medium" }),
-      kr({ id: "kr-a2", layerId: "alibaba", phase: "pAli", name: "OpenTrek 计量/分发实例 ≥ 1 个省公司", targetValue: 1, currentValue: 0, unit: "个", owner: "王蕾", dueDate: D(200), status: "not_started", confidence: "low" }),
-      kr({ id: "kr-a3", layerId: "alibaba", phase: "pAli", name: "可复制方案卡 ≥ 5 张，并带动阿里云/PPU 后续商机", targetValue: 5, currentValue: 1, prev: 0, unit: "张", owner: "赵宁", dueDate: D(240), status: "in_progress", confidence: "medium" }),
-      kr({ id: "kr-a4", layerId: "alibaba", phase: "pAli", name: "与阿里云运营商团队完成一次边界规则对齐", targetValue: 1, currentValue: 0, unit: "次", owner: "陈晨", dueDate: D(21), status: "at_risk", confidence: "low" }),
-    ],
-    tasks: [
-      { id: "b-t1", layerId: "bloodline", title: "打包‘直客直销’与‘电信生态’双轨制一页纸方案", description: "针对销售不敢卖、不会卖的问题，提炼两套极简方案：一是面向直客的“私有化算力盘活版”，讲清如何帮客户省钱/创收；二是面向电信体系的“Token生态准入与算力并网版”，讲清如何帮电信完成Token指标。用一页纸直接给一线做敲门砖。", owner: "产品市场部", dueDate: "", priority: "P0", status: "in_progress", tags: ["方案包装", "弹药输出"], dependencies: [], assetRefs: [], createdAt: D(-14) },
-      { id: "b-t2", layerId: "bloodline", title: "搭建并验证阿里AI+ZStack底座的轻量级POC演示沙箱", description: "利用现有测试环境完成OpenTrek Token计量与ZStack AIOS的联调。形成标准化的演示环境与测试流程，确保销售在直客或电信客户提出“现场测一下”的需求时，产品市场部能随时顶上，提供Demo支撑，不因技术验证卡壳丢单。", owner: "产品市场部", dueDate: "", priority: "P0", status: "in_progress", tags: ["POC能力", "技术兜底"], dependencies: [], assetRefs: [], createdAt: D(-14) },
-      { id: "b-t3", layerId: "bloodline", title: "确立首批FDE人员及现场接单考核规则", description: "从具备底层技术背景的团队中选拔骨干组建FDE小分队。明确FDE的接单边界（不接纯人天外包、必须能产出可复用方案卡）。制定FDE在现场的交付SOP，确保前线销售清楚“什么项目可以拉FDE进场”，且后方技术交付质量可控。", owner: "产品市场部", dueDate: "", priority: "P0", status: "in_progress", tags: ["FDE建设", "交付协同"], dependencies: [], assetRefs: [], createdAt: D(-14) },
-      { id: "b-t4", layerId: "bloodline", title: "制定面向电信体系关键节点的拜访计划与Pitch材料", description: "配合销售团队，梳理电信Token运营中心、算力超市负责人的核心KPI与关注点。制作“从存量算力到Token计费”的价值汇报材料，以产品专家身份参与关键客户的拜访，用业务逻辑帮助销售推进决策。", owner: "产品市场部", dueDate: "", priority: "P1", status: "in_progress", tags: ["高层拜访", "价值输出"], dependencies: [], assetRefs: [], createdAt: D(-14) },
-      { id: "b-t5", layerId: "bloodline", title: "梳理阻碍直客与电信打单的真实卡点及应对预案", description: "收集一线在推进直客或电信项目中遇到的实际阻力（如：竞品价格更低、客户认为产品不够成熟、集成资质不够等），针对性地输出对比测试报告、特价支持诉求材料或技术解答FAQ，帮助销售在商务谈判中争取主动。", owner: "产品市场部", dueDate: "", priority: "P1", status: "in_progress", tags: ["竞品应对", "扫清障碍"], dependencies: [], assetRefs: [], createdAt: D(-14) },
-      { id: "t-5", layerId: "econiche", title: "X市 存量 GPU 盘点与利用率基线", description: "输出资源清单与利用率基线，作为 Token 计量成功标准的起点。", owner: "刘洋", dueDate: D(2), priority: "P0", status: "in_progress", tags: ["FDE", "生态位"], dependencies: [], assetRefs: [], createdAt: D(-14) },
-      { id: "t-6", layerId: "econiche", title: "方案卡《省公司Token计量对接》V1 评审", description: "与 FDE 回流的对接规范合并，进入评审。", owner: "赵宁", dueDate: D(6), priority: "P1", status: "todo", tags: ["方案卡", "销售赋能"], dependencies: ["t-5"], assetRefs: ["as-2"], createdAt: D(-4) },
-      { id: "t-7", layerId: "econiche", title: "方案卡《地市存量GPU盘活》V1 发布并组织销售培训", description: "在 2 个省份销售例会讲解，收集异议话术。", owner: "赵宁", dueDate: D(-3), priority: "P1", status: "done", tags: ["方案卡", "销售赋能"], dependencies: [], assetRefs: ["as-1"], createdAt: D(-18), completedAt: D(-2) },
-      { id: "t-8", layerId: "econiche", title: "FDE 三方评审机制固化为制度文件", description: "产品市场 / 交付 / 销售三方评审模板，FDE 接单前必过；报事业部发文。", owner: "王蕾", dueDate: D(12), priority: "P1", status: "todo", tags: ["FDE"], dependencies: [], assetRefs: [], createdAt: D(-25) },
-      { id: "t-9", layerId: "alibaba", title: "与阿里云运营商团队边界规则对齐会", description: "基于初稿逐条对齐：谁主导、谁跟进、商机如何登记。", owner: "陈晨", dueDate: D(10), priority: "P0", status: "todo", tags: ["阿里价值", "联合体"], dependencies: ["事业部负责人约会"], assetRefs: [], createdAt: D(-3) },
-      { id: "t-10", layerId: "alibaba", title: "三个可统计口径的数据底座表搭建", description: "PPU 上线节点、OpenTrek 承载实例、方案卡及带动商机，统一登记表与证据链接。", owner: "陈晨", dueDate: D(14), priority: "P1", status: "in_progress", tags: ["阿里价值"], dependencies: [], assetRefs: [], createdAt: D(-8) },
-    ],
+    keyResults,
+    tasks,
     milestones: [
-      { id: "ms-1", layerId: "bloodline", name: "场景化定开项目 #1 立项", date: D(-5), status: "done", dependency: "", note: "已附回流资产清单" },
-      { id: "ms-2", layerId: "bloodline", name: "两省生态准入进入对接流程", date: D(45), status: "in_progress", dependency: "A省补材 / B省对接会", note: "" },
-      { id: "ms-3", layerId: "econiche", name: "X市 最小闭环跑通", date: D(40), status: "in_progress", dependency: "GPU 盘点 + 计量模块 License", note: "可计费 Token 首张账单" },
-      { id: "ms-4", layerId: "econiche", name: "90 天滩头验证复盘", date: D(58), status: "not_started", dependency: "最小闭环跑通", note: "决定是否复制到第二个地市" },
-      { id: "ms-5", layerId: "alibaba", name: "边界规则对齐会", date: D(10), status: "at_risk", dependency: "事业部负责人约会", note: "" },
-      { id: "ms-6", layerId: "alibaba", name: "首个地市 PPU 上线节点", date: D(120), status: "not_started", dependency: "X市 闭环验证", note: "" },
+      { id: "ms-1", layerId: "bloodline", name: "历史欠款清收专班成立", date: D(-10), status: "done", dependency: "", note: "按客户逐笔建立清收台账" },
+      { id: "ms-2", layerId: "bloodline", name: "双轨制一页纸方案发布", date: D(14), status: "in_progress", dependency: "配置清单与参考报价区间", note: "直客版 + 电信版" },
+      { id: "ms-3", layerId: "bloodline", name: "特价审批与垫资清算快速通道落地", date: D(45), status: "not_started", dependency: "事业部与财务审批", note: "" },
+      { id: "ms-4", layerId: "econiche", name: "FDE首批人员到位", date: D(20), status: "in_progress", dependency: "CMP团队人员抽调", note: "含接单边界与现场交付SOP" },
+      { id: "ms-5", layerId: "econiche", name: "首个地市最小闭环跑通", date: D(75), status: "not_started", dependency: "POC沙箱联调完成", note: "形成首个成功样板点" },
+      { id: "ms-6", layerId: "alibaba", name: "联合拿单方案与报价体系V1发布", date: D(60), status: "not_started", dependency: "利益测算模型", note: "" },
+      { id: "ms-7", layerId: "alibaba", name: "与阿里拉齐分润与报备机制", date: D(90), status: "at_risk", dependency: "事业部负责人出面对齐", note: "" },
     ],
     risks: [
-      { id: "r-1", layerId: "bloodline", description: "垫资审批节点不明确，场景化定开项目可能被迫延期启动", level: "high", impact: "回血线 90 天现金流目标落空", mitigation: "本周内与财务 BP 确定审批节点；准备分阶段付款方案", owner: "李航", dueDate: D(5), status: "open", createdAt: D(-6) },
-      { id: "r-2", layerId: "econiche", description: "FDE 小分队被拉去支援普通 ICT 定开项目", level: "high", impact: "滩头验证周期被稀释，方案卡回流延迟", mitigation: "坚持三方评审；FDE 考核不看人天，由事业部负责人背书", owner: "王蕾", dueDate: D(7), status: "mitigating", createdAt: D(-10) },
-      { id: "r-3", layerId: "alibaba", description: "与阿里云运营商团队边界未对齐，存在商机重叠争议", level: "high", impact: "阿里总部对价值口径不认可", mitigation: "尽快召开对齐会，先对齐“谁登记商机”规则", owner: "陈晨", dueDate: D(10), status: "open", createdAt: D(-4) },
-      { id: "r-4", layerId: "econiche", description: "OpenTrek 计量模块测试 License 未到位", level: "medium", impact: "X市 闭环验证延后约 2 周", mitigation: "通过阿里接口人走加急流程；先用模拟计量数据跑链路", owner: "周凯", dueDate: D(8), status: "open", createdAt: D(-2) },
-      { id: "r-5", layerId: "bloodline", description: "B省 入口类型判断不清，材料包可能返工", level: "low", impact: "B省 准入延迟一个申报窗口", mitigation: "首轮对接会前准备两套材料包骨架", owner: "孙悦", dueDate: D(9), status: "open", createdAt: D(-1) },
+      { id: "r-1", layerId: "bloodline", description: "历史欠款清收进展慢，报销机制迟迟无法恢复，一线信心难以修复", level: "high", impact: "销售不敢接单，回血线现金流目标落空", mitigation: "清收专班按客户逐笔跟进；报销恢复方案提交事业部决策", owner: "产品市场部负责人", dueDate: D(7), status: "open", createdAt: D(-6) },
+      { id: "r-2", layerId: "bloodline", description: "电信项目仍普遍要求垫资，联合体与公司兜底机制未落地前可能被迫垫资", level: "medium", impact: "新增垫资风险，重蹈历史欠款覆辙", mitigation: "电信项目优先走联合体模式；垫资清算快速通道方案同步推进", owner: "产品市场部", dueDate: D(14), status: "mitigating", createdAt: D(-10) },
+      { id: "r-3", layerId: "econiche", description: "FDE人员从CMP团队抽调受阻，或被拉去支援纯人天项目", level: "high", impact: "滩头验证周期被稀释，方案卡沉淀延迟", mitigation: "明确FDE接单边界与考核规则，由事业部负责人背书", owner: "产品市场部 & FDE负责人", dueDate: D(10), status: "open", createdAt: D(-4) },
+      { id: "r-4", layerId: "econiche", description: "OpenTrek/PPU测试资源未到位，POC沙箱联调受影响", level: "medium", impact: "销售“现场测一下”的需求无法及时响应", mitigation: "通过阿里接口人加急申请；先用现有轻量Demo顶上", owner: "产品市场部", dueDate: D(8), status: "open", createdAt: D(-2) },
+      { id: "r-5", layerId: "alibaba", description: "与阿里的分润/报备机制未拉齐，联合带货存在撞单与利益冲突", level: "high", impact: "阿里一线不愿交线索，联合带货难以规模化", mitigation: "先就“绑定性报备”规则达成一致，再谈特价资源池", owner: "产品市场部", dueDate: D(21), status: "open", createdAt: D(-3) },
     ],
     assets: [
-      { id: "as-1", name: "地市存量GPU盘活方案卡", type: "solution_card", layerId: "econiche", version: "V1", owner: "赵宁", status: "published", usedProvinces: ["A省", "B省"], usageCount: 5, updatedAt: D(-2), link: "https://example.com/cards/gpu-revive" },
-      { id: "as-2", name: "省公司Token计量对接规范（草稿）", type: "solution_card", layerId: "econiche", version: "V0.8", owner: "赵宁", status: "review", usedProvinces: ["A省"], usageCount: 2, updatedAt: D(-1), link: "https://example.com/cards/token-metering" },
-      { id: "as-3", name: "政企Token套餐", type: "solution_card", layerId: "bloodline", version: "V0.3", owner: "李航", status: "draft", usedProvinces: [], usageCount: 0, updatedAt: D(-6), link: "https://example.com/cards/gov-token-package" },
+      { id: "as-1", name: "地市存量GPU盘活方案卡", type: "solution_card", layerId: "econiche", version: "V1", owner: "产品市场部", status: "published", usedProvinces: ["福建"], usageCount: 3, updatedAt: D(-2), link: "https://example.com/cards/gpu-revive" },
+      { id: "as-2", name: "省公司Token计量对接规范（草稿）", type: "solution_card", layerId: "econiche", version: "V0.8", owner: "产品市场部", status: "review", usedProvinces: ["福建"], usageCount: 1, updatedAt: D(-1), link: "https://example.com/cards/token-metering" },
+      { id: "as-3", name: "政企Token套餐", type: "solution_card", layerId: "econiche", version: "V0.3", owner: "产品市场部", status: "draft", usedProvinces: [], usageCount: 0, updatedAt: D(-6), link: "https://example.com/cards/gov-token-package" },
+      { id: "as-4", name: "双轨制一页纸方案（直客版 / 电信版）", type: "pitch_pack", layerId: "bloodline", version: "V0.9", owner: "产品市场部", status: "review", usedProvinces: ["福建", "北京"], usageCount: 4, updatedAt: D(-1), link: "https://example.com/docs/dual-track-onepager" },
     ],
     fdeTracks: [
       {
         id: "fde-1",
-        scenario: "地市存量 GPU 盘活 → 可计费 Token",
-        city: "A省·X市",
-        customer: "X市分公司 政企部 / 云网运营中心",
+        scenario: "地市存量算力盘活 → 可计费 Token",
+        city: "福建 · 首个滩头地市",
+        customer: "本地政企客户 / 地市算力中心",
         members: [
-          { role: "场景负责人", name: "周凯" },
-          { role: "交付工程师", name: "刘洋" },
-          { role: "产品市场接口人", name: "王蕾" },
+          { role: "场景负责人", name: "FDE负责人" },
+          { role: "交付工程师", name: "FDE骨干（CMP团队）" },
+          { role: "产品市场接口人", name: "产品市场部" },
         ],
         successMetrics: [
-          { name: "可计费 Token 量", target: "≥ 5 亿 Token/月", current: "未计量" },
-          { name: "资源利用率", target: "≥ 45%", current: "18%（基线）" },
-          { name: "服务开通周期", target: "≤ 3 个工作日", current: "约 15 个工作日" },
-          { name: "政企客户调用持续性", target: "≥ 3 家连续 4 周调用", current: "0" },
+          { name: "可计费 Token 量", target: "跑通首张账单", current: "未计量" },
+          { name: "资源利用率", target: "较基线显著提升", current: "基线采集中" },
+          { name: "服务开通周期", target: "≤ 3 个工作日", current: "未评估" },
+          { name: "政企客户调用持续性", target: "≥ 3 家持续调用", current: "0" },
         ],
-        stage: "onsite",
-        ruleChecks: { isBeachheadScenario: true, hasBackflowList: true, tripartiteReviewed: true },
+        stage: "define",
+        ruleChecks: { isBeachheadScenario: true, hasBackflowList: true, tripartiteReviewed: false },
         assets: [
-          { name: "配置模板", done: true },
+          { name: "配置模板", done: false },
           { name: "对接规范", done: false },
           { name: "报价逻辑", done: false },
           { name: "异议话术", done: false },
           { name: "方案卡版本（地市存量GPU盘活 V1）", done: true },
         ],
-        risks: ["OpenTrek 计量模块 License 未到位", "存在被抽调支援 ICT 定开的压力"],
+        risks: ["FDE人员抽调尚未完成", "OpenTrek/PPU测试资源未到位"],
         updatedAt: D(-2),
       },
     ],
     provinces: [
-      { id: "pv-1", province: "A省", entryType: "token_supplier", conditionFit: 75, gaps: "运营服务案例 1 项", materialStatus: "submitted", contact: "孙悦", stage: "二轮补材", nextStep: "补齐运营服务案例并提交", dueDate: D(3), status: "in_progress" },
-      { id: "pv-2", province: "B省", entryType: "ops_partner", conditionFit: 40, gaps: "入口类型未定；本地服务团队证明；联合体协议", materialStatus: "preparing", contact: "孙悦", stage: "首轮对接", nextStep: "召开首轮对接会，确定入口类型", dueDate: D(9), status: "at_risk" },
+      { id: "pv-1", province: "福建", zone: "直客直销突破区", entryType: "direct_sales", conditionFit: 70, gaps: "首个POC客户待锁定", materialStatus: "preparing", contact: "产品市场部 / 区域销售", stage: "FDE 现场POC对接", nextStep: "不依赖电信渠道，销售直接对接本地政企客户。FDE带ZStack底座+阿里AI产品直接进场，跑通存量算力盘活，快速拿单回血。", dueDate: "", status: "in_progress" },
+      { id: "pv-2", province: "北京", zone: "电信生态依赖区", entryType: "telecom_token", conditionFit: 60, gaps: "高层客情待打通；算力超市并网技术规范", materialStatus: "submitted", contact: "产品市场部 / 区域销售", stage: "生态准入申报与高层对接", nextStep: "高度依赖电信客情，销售顺着电信的Token经营战略。走Token供给主体直签或算力超市并网，把我们的底座变成电信的地市算力节点。", dueDate: "", status: "in_progress" },
+      { id: "pv-3", province: "广东", zone: "渠道合作区（我方销售覆盖弱）", entryType: "si_consortium", conditionFit: 20, gaps: "缺少有电信客情的集成商伙伴", materialStatus: "not_started", contact: "产品市场部", stage: "伙伴寻源", nextStep: "寻找有电信客情的集成商，我们提供底座与方案，借船出海，不投入FDE资源。", dueDate: "", status: "not_started" },
+      { id: "pv-4", province: "浙江", zone: "防御观望区", entryType: "ict_fallback", conditionFit: 0, gaps: "—", materialStatus: "not_started", contact: "区域销售", stage: "维持现状", nextStep: "不主动投入FDE资源，按常规项目评估。", dueDate: "", status: "not_started" },
     ],
     alibabaValue: {
       ppuNodes: { current: 0, target: 2 },
       openTrekInstances: { current: 0, target: 1 },
       assetCards: { current: 1, target: 5 },
-      businessLeads: 1,
+      businessLeads: 0,
       boundaryStatus: "draft",
       notes: [
-        "我们做的是阿里云不做的“地市落地纵深”：现场盘活、计量对接、政企套餐落地。",
-        "每一个 PPU 上线节点、OpenTrek 承载实例都可登记、可复盘，形成总部可统计的事实底座。",
-        "方案卡是放大器：一张卡被多省复用，带动阿里云/PPU 后续商机。",
+        "我们是阿里AI产品在电信体系的“带货商”：用下沉渠道和打包能力帮一线赢单、帮阿里出货。",
+        "把“ZStack底座 + 阿里AI（OpenTrek/PPU）”包装成销售能直接拿单的联合方案，而不是单卖产品。",
+        "用“带货战报”（商机数、阿里产品出货量）持续向阿里证明渠道变现价值，换取更优的资源倾斜。",
       ],
       evidenceLinks: [
-        { title: "三个可统计口径定义 v0.3", url: "https://example.com/docs/ali-metrics" },
-        { title: "边界规则初稿", url: "https://example.com/docs/boundary-draft" },
+        { title: "《阿里AI+ZStack》联合带货方案框架", url: "https://example.com/docs/joint-offer" },
+        { title: "分润 / 报备机制讨论稿", url: "https://example.com/docs/revenue-share-draft" },
       ],
     },
   };

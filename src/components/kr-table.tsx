@@ -69,6 +69,13 @@ export function KrTable({ layerId, applyFilters = true }: { layerId?: LayerId; a
                           <span className="tabular-nums">{k.targetValue}</span>
                           <span>{k.unit}</span>
                         </span>
+                        {(k.targetNote || k.currentNote) && (
+                          <div className="mt-1 text-[11px] text-slate-400">
+                            {k.currentNote && <span className="text-blue-700">{k.currentNote}</span>}
+                            {k.currentNote && k.targetNote && " · "}
+                            {k.targetNote && <>目标：{k.targetNote}</>}
+                          </div>
+                        )}
                       </td>
                       <td className="px-2 py-2">
                         <div className="flex items-center gap-2">

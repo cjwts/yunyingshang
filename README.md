@@ -53,6 +53,8 @@ src/
 - KR 当前值每次变化都会记入 `history`，周报据此计算「本周 KR 变化」。
 - 任务改为「已完成」时自动记录 `completedAt`，用于周报「本周完成」。
 - 风险统一存放在 `risks` 集合，通过 `layerId` 关联主线。
+- KR 与任务的完整数据存放在 `keyResults` / `tasks` 集合；主线上的 `krList` / `taskList` 是对应的 id 列表，由 store 自动保持同步。
+- KR 可附带定性说明 `targetNote` / `currentNote`（如“全员覆盖 / 编写中”），与数值进度并列展示。
 
 ## 替换为 Supabase
 

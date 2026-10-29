@@ -176,8 +176,10 @@ export default function DashboardPage() {
                   <Pill className={PRIORITY[t.priority].className}>{t.priority}</Pill>
                   <span className="min-w-0 flex-1 truncate text-xs text-slate-800">{t.title}</span>
                   <StatusBadge tone={TASK_STATUS[t.status].tone} label={TASK_STATUS[t.status].label} />
-                  <span className="hidden w-10 text-[11px] text-slate-500 sm:inline">{t.owner}</span>
-                  <span className="w-24 text-right text-[11px]">
+                  <span className="hidden w-28 truncate text-[11px] text-slate-500 sm:inline" title={t.owner}>
+                    {t.owner}
+                  </span>
+                  <span className="w-20 text-right text-[11px] whitespace-nowrap">
                     <DueDate date={t.dueDate} />
                   </span>
                 </li>

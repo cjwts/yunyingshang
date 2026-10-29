@@ -144,7 +144,7 @@ export function generateWeeklyMarkdown(data: AppData, ref?: string): string {
   L.push(`**Token 生态准入**`);
   data.provinces.forEach((p) =>
     L.push(
-      `- ${p.province}（${ENTRY_TYPE[p.entryType]}）：${p.stage}，条件满足度 ${p.conditionFit}%，材料包${MATERIAL_STATUS[p.materialStatus].label}；缺口：${p.gaps || "无"}；下一步：${p.nextStep}`,
+      `- ${p.province}·${p.zone || "未定位"}（${ENTRY_TYPE[p.entryType]}）：${p.stage}，条件满足度 ${p.conditionFit}%，材料包${MATERIAL_STATUS[p.materialStatus].label}；缺口：${p.gaps || "无"}；下一步：${p.nextStep}`,
     ),
   );
   L.push("");
