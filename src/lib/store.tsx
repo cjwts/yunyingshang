@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { krProgress, todayISO } from "@/lib/calc";
+import { createMockData } from "@/data/mockData";
 import { dataService } from "@/lib/dataService";
 import type { AppData, GlobalFilters } from "@/types";
 
@@ -52,8 +53,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const stored = await dataService.load();
-      const initial = stored ?? (await dataService.reset());
+      let initial: AppData;
+      try {
+        initial = (await dataService.load()) ?? (await dataService.reset());
+      } catch {
+        initial = createMockData();
+      }
       if (!cancelled) {
         loaded.current = true;
         setData(initial);
@@ -65,7 +70,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (data && loaded.current) void dataService.save(data);
+    if (data && loaded.current) dataService.save(data).catch(() => undefined);
   }, [data]);
 
   const update = useCallback((mutate: (draft: AppData) => void) => {
@@ -106,12 +111,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     [data, update, upsert, remove, reset, filters],
   );
 
-  if (!value) {
-    return (
-      <div className="flex h-screen items-center justify-center text-sm text-muted-foreground">正在加载本地数据…</div>
-    );
-  }
+  if (!value) return <LoadingScreen />;
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
+}
+
+/** 提示在 8 秒后通过纯 CSS 显示，这样即使脚本未能加载也能看到 */
+function LoadingScreen() {
+  return (
+    <div className="flex h-screen flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+      <p>正在加载本地数据…</p>
+      <p className="delayed-hint text-xs">加载时间较长，请刷新页面；若仍无响应，请检查网络或浏览器是否禁用了 JavaScript / 本地存储。</p>
+    </div>
+  );
 }
 
 export function useStore(): StoreValue {

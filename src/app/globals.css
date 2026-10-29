@@ -128,3 +128,12 @@
     @apply font-sans;
   }
 }
+.delayed-hint {
+  opacity: 0;
+  animation: delayed-hint-show 0s linear 8s forwards;
+}
+@keyframes delayed-hint-show {
+  to {
+    opacity: 1;
+  }
+}
